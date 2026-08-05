@@ -1,14 +1,9 @@
-import { AuthRepositoryImpl } from "../../repositories/auth/auth.repository";
 import type { AuthRepository } from "../../repositories/auth/auth.repository.interface";
-import type { CreateUserDTO } from "../../types/auth/dto/auth.dto";
-import type { UserEntity } from "../../types/auth/entity/auth.entity";
+import type { CreateUserDTO } from "../../types/dtos/auth.dto";
+import type { UserEntity } from "../../types/entities/auth.entity";
 import { ApiError } from "../../utils/apierror.utils";
 import type { AuthService } from "./auth.service.interface";
 import bcrypt from "bcrypt";
-
-
-
-const userRepository = new AuthRepositoryImpl();
 
 const envSalt = process.env.SALT_ROUNDS;
 const SALT_ROUNDS: number = envSalt ? parseInt(envSalt, 10) : 10;

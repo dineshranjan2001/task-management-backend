@@ -1,6 +1,6 @@
 import prisma from "../../configs/db.config";
-import type { CreateUserDTO } from "../../types/auth/dto/auth.dto";
-import type { UserEntity } from "../../types/auth/entity/auth.entity";
+import type { CreateUserDTO } from "../../types/dtos/auth.dto";
+import type { UserEntity } from "../../types/entities/auth.entity";
 import type { AuthRepository } from "./auth.repository.interface";
 
 export class AuthRepositoryImpl implements AuthRepository {

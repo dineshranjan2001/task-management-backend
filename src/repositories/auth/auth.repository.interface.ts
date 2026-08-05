@@ -1,5 +1,5 @@
-import type { CreateUserDTO } from "../../types/auth/dto/auth.dto";
-import type { UserEntity } from "../../types/auth/entity/auth.entity";
+import type { CreateUserDTO } from "../../types/dtos/auth.dto";
+import type { UserEntity } from "../../types/entities/auth.entity";
 
 export interface AuthRepository{
     findByEmail(email:string):Promise<UserEntity | null>;
