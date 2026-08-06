@@ -5,15 +5,410 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  schemas  = ["master", "tms_main"]
+  schemas  = ["master", "auth"]
 }
 
-model RoleMaster {
-  id        Int      @id @default(autoincrement())
-  roleName  String   @unique @map("role_name")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+// // master schema models
+// model Status {
+//   id         Int      @id @default(autoincrement())
+//   statusName String   @unique @map("status_name")
+//   createdAt  DateTime @default(now()) @map("created_at")
+//   updatedAt  DateTime @updatedAt @map("updated_at")
 
-  @@map("role_master")
-  @@schema("master")
-}
+//   tenants           Tenant[]
+//   workspaces        Workspace[]
+//   organizations     Organization[]
+//   teams             Team[]
+//   users             User[]
+//   workspaceMappings WorkspaceMapping[]
+//   roles             Role[]
+//   invitations       Invitation[]
+//   accounts          Account[]
+
+//   @@map("status")
+//   @@schema("master")
+// }
+
+// model Tenant {
+//   id                 String    @id @default(uuid())
+//   tenantCode         String    @map("tenant_code")
+//   name               String
+//   slug               String    @unique
+//   logoUrl            String    @map("logo_url")
+//   domain             String
+//   subscriptionPlanId String    @map("subscription_plan_id") // to do reference
+//   status             Int       @default(1)
+//   createdBy          String?   @map("created_by") // to do reference
+//   updatedBy          String?   @map("updated_by") // to do reference
+//   createdAt          DateTime  @default(now()) @map("created_at")
+//   updatedAt          DateTime  @updatedAt @map("updated_at")
+//   deletedAt          DateTime?
+
+//   tenantStatus    Status      @relation(fields: [status], references: [id])
+//   tenantCreatedBy User?       @relation(name: "TenantCreatedBy", fields: [createdBy], references: [id])
+//   tenantUpdatedBy User?       @relation(name: "TenantUpdatedBy", fields: [updatedBy], references: [id])
+//   workspaces      Workspace[]
+//   auditLogs       AuditLog[]
+
+//   @@index([tenantCode, subscriptionPlanId, createdBy, updatedBy])
+//   @@map("tenant")
+//   @@schema("master")
+// }
+
+// model Workspace {
+//   id            String   @id @default(uuid())
+//   workspaceCode String   @map("workspace_code")
+//   tenantId      String   @map("tenant_id")
+//   ownerId       String   @map("owner_id")
+//   name          String
+//   slug          String
+//   description   String   @db.Text
+//   logoUrl       String?  @map("logo_url")
+//   timeZone      String   @map("time_zone")
+//   language      String // to do reference
+//   currency      Int // to do reference
+//   status        Int      @default(1)
+//   createdAt     DateTime @default(now()) @map("created_at")
+//   updatedAt     DateTime @updatedAt @map("updated_at")
+
+//   workspaceTenant   Tenant             @relation(fields: [tenantId], references: [id])
+//   workspaceStatus   Status             @relation(fields: [status], references: [id])
+//   workspaceOwner    User               @relation(fields: [ownerId], references: [id])
+//   organizations     Organization[]
+//   teams             Team[]
+//   workspaceMappings WorkspaceMapping[]
+//   roles             Role[]
+//   invitations       Invitation[]
+//   auditLogs         AuditLog[]
+//   activityLogs      ActivityLog[]
+
+//   @@index([workspaceCode, tenantId])
+//   @@map("workspace")
+//   @@schema("master")
+// }
+
+// model Organization {
+//   id          String   @id @default(uuid())
+//   workspaceId String   @map("workspace_id")
+//   name        String
+//   description String   @db.Text
+//   parentId    String?  @map("parent_id")
+//   managerId   String   @map("manager_id")
+//   status      Int      @default(1)
+//   createdAt   DateTime @default(now()) @map("created_at")
+//   updatedAt   DateTime @updatedAt @map("updated_at")
+
+//   organizationWorkspace Workspace             @relation(fields: [workspaceId], references: [id])
+//   parentOrganization    Organization?         @relation("OrganizationHierarchy", fields: [parentId], references: [id])
+//   organizations         Organization[]        @relation("OrganizationHierarchy")
+//   organizationStatus    Status                @relation(fields: [status], references: [id])
+//   teams                 Team[]
+//   organizationManager   User                  @relation(fields: [managerId], references: [id])
+//   organizationMappings  OrganizationMapping[]
+
+//   @@index([parentId, workspaceId, managerId])
+//   @@map("organization")
+//   @@schema("master")
+// }
+
+// model Team {
+//   id             String   @id @default(uuid())
+//   organizationId String   @map("organization_id")
+//   workspaceId    String   @map("workspace_id")
+//   leadId         String   @map("lead_id")
+//   name           String
+//   description    String   @db.Text
+//   avatar         String?
+//   status         Int      @default(1)
+//   createdAt      DateTime @default(now()) @map("created_at")
+//   updatedAt      DateTime @updatedAt @map("updated_at")
+
+//   teamStatus       Status        @relation(fields: [status], references: [id])
+//   teamOrganization Organization  @relation(fields: [organizationId], references: [id])
+//   teamWorkspace    Workspace     @relation(fields: [workspaceId], references: [id])
+//   teameLead        User          @relation(fields: [leadId], references: [id])
+//   teamMappings     TeamMapping[]
+
+//   @@index([organizationId, workspaceId, leadId])
+//   @@map("team")
+//   @@schema("master")
+// }
+
+// model User {
+//   id            String   @id @default(uuid())
+//   userCode      String   @map("user_code")
+//   firstName     String   @map("first_name")
+//   lastName      String   @map("last_name")
+//   displayName   String   @map("display_name")
+//   username      String   @unique
+//   email         String   @unique
+//   phone         String   @unique
+//   password      String
+//   avatar        String?
+//   jobTitle      String   @map("job_title")
+//   bio           String   @db.Text
+//   timeZone      String   @map("time_zone")
+//   language      String // to do reference
+//   lastLogin     DateTime @map("last_login")
+//   emailVerified BigInt   @default(0) @map("email_verified")
+//   phoneVerified BigInt   @default(0) @map("phone_verified")
+//   status        Int      @default(1)
+//   createdAt     DateTime @default(now()) @map("created_at")
+//   updatedAt     DateTime @updatedAt @map("updated_at")
+
+//   userStatus           Status                @relation(fields: [status], references: [id])
+//   teams                Team[]
+//   organizations        Organization[]
+//   workspaces           Workspace[]
+//   createdByTenants     Tenant[]              @relation("TenantCreatedBy")
+//   updatedByTenants     Tenant[]              @relation("TenantUpdatedBy")
+//   workspaceMappings    WorkspaceMapping[]
+//   organizationMappings OrganizationMapping[]
+//   teamMappings         TeamMapping[]
+//   auditLogs            AuditLog[]
+//   activityLogs         ActivityLog[]
+//   accounts             Account[]
+
+//   @@index([userCode, email, phone])
+//   @@map("users")
+//   @@schema("master")
+// }
+
+// // Workspace Member
+// model WorkspaceMapping {
+//   id          String   @id @default(uuid())
+//   workspaceId String   @map("workspace_id")
+//   userId      String   @map("user_id")
+//   joinedAt    DateTime @default(now()) @map("joined_at")
+//   status      Int      @default(1)
+
+//   workspaceMappingUser      User       @relation(fields: [userId], references: [id])
+//   workspaceMappingWorkspace Workspace  @relation(fields: [workspaceId], references: [id])
+//   workspaceMappingStatus    Status     @relation(fields: [status], references: [id])
+//   userRoles                 UserRole[]
+
+//   @@index([workspaceId, userId])
+//   @@map("workspace_map")
+//   @@schema("master")
+// }
+
+// // Organization Member
+// model OrganizationMapping {
+//   id             String   @id @default(uuid())
+//   organizationId String   @map("organization_id")
+//   userId         String   @map("user_id")
+//   designation    String
+//   joinedAt       DateTime @default(now()) @map("joined_at")
+
+//   orgMapping     Organization @relation(fields: [organizationId], references: [id])
+//   orgMappingUser User         @relation(fields: [userId], references: [id])
+
+//   @@index([organizationId, userId])
+//   @@map("organization_map")
+//   @@schema("master")
+// }
+
+// // Team Member
+// model TeamMapping {
+//   id       String   @id @default(uuid())
+//   teamId   String   @map("team_id")
+//   userId   String   @map("user_id")
+//   joinedAt DateTime @default(now()) @map("joined_at")
+//   isLead   BigInt   @default(0) @map("is_lead")
+
+//   teamMap     Team @relation(fields: [teamId], references: [id])
+//   teamMapUser User @relation(fields: [userId], references: [id])
+
+//   @@index([teamId, userId])
+//   @@map("team_map")
+//   @@schema("master")
+// }
+
+// model Role {
+//   id          Int      @id @default(autoincrement())
+//   workspaceId String
+//   name        String
+//   description String?  @db.Text
+//   systemRole  String   @map("system_role")
+//   status      Int      @default(1)
+//   createdAt   DateTime @default(now()) @map("created_at")
+//   updatedAt   DateTime @updatedAt @map("updated_at")
+
+//   roleStatus      Status           @relation(fields: [status], references: [id])
+//   workspaceRole   Workspace        @relation(fields: [workspaceId], references: [id])
+//   rolePermissions RolePermission[]
+//   userRoles       UserRole[]
+//   invitations     Invitation[]
+
+//   @@index([workspaceId])
+//   @@map("role")
+//   @@schema("master")
+// }
+
+// model Permission {
+//   id              Int              @id @default(autoincrement())
+//   module          String
+//   action          String
+//   permissionKey   String           @map("permission_key")
+//   description     String           @db.Text
+//   createdAt       DateTime         @default(now()) @map("created_at")
+//   updatedAt       DateTime         @updatedAt @map("updated_at")
+//   rolePermissions RolePermission[]
+
+//   @@map("permission")
+//   @@schema("master")
+// }
+
+// model RolePermission {
+//   id           String @id @default(uuid())
+//   roleId       Int    @map("role_id")
+//   permissionId Int    @map("permission_id")
+
+//   roleMapping       Role       @relation(fields: [roleId], references: [id])
+//   permissionMapping Permission @relation(fields: [permissionId], references: [id])
+
+//   @@index([roleId, permissionId])
+//   @@map("role_permission")
+//   @@schema("master")
+// }
+
+// model UserRole {
+//   id                String @id @default(uuid())
+//   workspaceMemberId String @map("workspace_member_id")
+//   roleId            Int    @map("role_id")
+
+//   workspaceMemberUserMap WorkspaceMapping @relation(fields: [workspaceMemberId], references: [id])
+//   roleUserMap            Role             @relation(fields: [roleId], references: [id])
+
+//   @@index([workspaceMemberId, roleId])
+//   @@map("user_role")
+//   @@schema("master")
+// }
+
+// model Invitation {
+//   id          String    @id @default(uuid())
+//   workspaceId String    @map("workspace_id")
+//   roleId      Int       @map("role_id")
+//   token       String
+//   expiresAt   DateTime  @map("expires_at")
+//   acceptedAt  DateTime? @map("accepted_at")
+//   status      Int       @default(1)
+
+//   invitationStatus    Status    @relation(fields: [status], references: [id])
+//   workspaceInvitation Workspace @relation(fields: [workspaceId], references: [id])
+//   roleInvition        Role      @relation(fields: [roleId], references: [id])
+
+//   @@index([workspaceId, roleId])
+//   @@map("invitation")
+//   @@schema("master")
+// }
+
+// model AuditLog {
+//   id          String   @id @default(uuid())
+//   tenantId    String   @map("tenant_id")
+//   workspaceId String   @map("workspace_id")
+//   userId      String   @map("user_id")
+//   module      String
+//   entity      String
+//   entityId    String?  @map("entity_id")
+//   action      String
+//   oldValue    String   @map("old_value")
+//   newValue    String   @map("new_value")
+//   ip          String
+//   device      String
+//   browser     String
+//   createdAt   DateTime @default(now()) @map("created_at")
+
+//   tenantAuditLog    Tenant    @relation(fields: [tenantId], references: [id])
+//   workspaceAuditLog Workspace @relation(fields: [workspaceId], references: [id])
+//   userAuditLog      User      @relation(fields: [userId], references: [id])
+
+//   @@index([tenantId, workspaceId, userId, entityId])
+//   @@map("audit_logs")
+//   @@schema("master")
+// }
+
+// model ActivityLog {
+//   id          String   @id @default(uuid())
+//   workspaceId String   @map("workspace_id")
+//   actorId     String   @map("actor_id")
+//   entity      String
+//   entityId    String?  @map("entity_id")
+//   action      String
+//   message     String   @db.Text
+//   metadata    Json?
+//   createdAt   DateTime @default(now()) @map("created_at")
+
+//   workspaceActivityLog Workspace @relation(fields: [workspaceId], references: [id])
+//   userActivityLog      User      @relation(fields: [actorId], references: [id])
+
+//   @@index([workspaceId, actorId, entityId])
+//   @@map("activity_logs")
+//   @@schema("master")
+// }
+
+// // end master schema models
+
+// auth schema models
+// model Account {
+//   id                String   @id @default(uuid())
+//   userId            String   @map("user_id")
+//   provider          String
+//   providerAccountId String?  @unique @map("provider_account_id")
+//   email             String
+//   passwordHash      String?  @map("password_hash")
+//   passwordAlgorithm String?  @map("password_algorithm")
+//   emailVerified     BigInt   @default(0) @map("email_verified")
+//   phoneVerified     BigInt   @default(0) @map("phone_verified")
+//   isPrimary         BigInt   @default(0) @map("is_primary")
+//   status            Int      @default(1)
+//   createdAt         DateTime @default(now()) @map("created_at")
+//   updatedAt         DateTime @updatedAt @map("updated_at")
+
+//   userAccount   User      @relation(fields: [userId], references: [id])
+//   accountStatus Status    @relation(fields: [status], references: [id])
+//   sessions      Session[]
+
+//   @@index([userId, providerAccountId, email])
+//   @@map("accounts")
+//   @@schema("auth")
+// }
+
+// model Session {
+//   id              String    @id @default(uuid())
+//   accountId       String    @map("account_id")
+//   deviceId        String?   @map("device_id")
+//   ipAddress       String?   @map("ip_address")
+//   userAgent       String?   @map("user_agent")
+//   location        String?
+//   loginAt         DateTime? @map("login_at")
+//   expiresAt       DateTime? @map("expires_at")
+//   lastAactivityAt DateTime? @map("last_activity_at")
+//   revokedAt       DateTime? @map("revoked_at")
+//   revokedReason   String    @map("revoked_reason") @db.Text
+
+//   sessionAccount Account        @relation(fields: [accountId], references: [id])
+//   refreshTokens  RefreshToken[]
+
+//   @@index([accountId, deviceId])
+//   @@map("session")
+//   @@schema("auth")
+// }
+
+// model RefreshToken {
+//   id          String    @id @default(uuid())
+//   sessionId   String    @map("session_id")
+//   tokenHash   String    @map("token_hash")
+//   expiresAt   DateTime? @map("expires_at")
+//   revokedAt   DateTime? @map("revoked_at")
+//   rotatedFrom String    @map("rotated_from")
+//   createdAt   DateTime  @default(now()) @map("created_at")
+
+//   refreshTokenSession Session @relation(fields: [sessionId], references: [id])
+
+//   @@index([sessionId])
+//   @@map("refresh_token")
+//   @@schema("auth")
+// }
+
+// end auth schema models
