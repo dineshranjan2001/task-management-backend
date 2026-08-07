@@ -1,120 +1,187 @@
 model Account {
-    id                String   @id @default(uuid())
-    userId            String   @map("user_id")
-    provider          String
-    providerAccountId String?  @unique @map("provider_account_id")
-    email             String
-    passwordHash      String?  @map("password_hash")
-    passwordAlgorithm String?  @map("password_algorithm")
-    emailVerified     BigInt   @default(0) @map("email_verified")
-    phoneVerified     BigInt   @default(0) @map("phone_verified")
-    isPrimary         BigInt   @default(0) @map("is_primary")
-    status            Int      @default(1)
-    createdAt         DateTime @default(now()) @map("created_at")
-    updatedAt         DateTime @updatedAt @map("updated_at")
+  id                String   @id @default(uuid())
+  userId            String   @map("user_id")
+  provider          String
+  providerAccountId String?  @unique @map("provider_account_id")
+  email             String
+  passwordHash      String?  @map("password_hash")
+  passwordAlgorithm String?  @map("password_algorithm")
+  emailVerified     BigInt   @default(0) @map("email_verified")
+  phoneVerified     BigInt   @default(0) @map("phone_verified")
+  isPrimary         BigInt   @default(0) @map("is_primary")
+  status            Int      @default(1)
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
 
-    userAccount   User      @relation(fields: [userId], references: [id])
-    accountStatus Status    @relation(fields: [status], references: [id])
-    sessions      Session[]
+  userAccount   User      @relation(fields: [userId], references: [id])
+  accountStatus Status    @relation(fields: [status], references: [id])
+  sessions      Session[]
 
-    @@index([userId, providerAccountId, email])
-    @@map("accounts")
-    @@schema("auth")
+  @@index([userId, providerAccountId, email])
+  @@map("accounts")
+  @@schema("auth")
 }
 
 model Session {
-    id              String    @id @default(uuid())
-    accountId       String    @map("account_id")
-    deviceId        String?   @map("device_id")
-    ipAddress       String?   @map("ip_address")
-    userAgent       String?   @map("user_agent")
-    location        String?
-    loginAt         DateTime? @map("login_at")
-    expiresAt       DateTime? @map("expires_at")
-    lastAactivityAt DateTime? @map("last_activity_at")
-    revokedAt       DateTime? @map("revoked_at")
-    revokedReason   String    @map("revoked_reason") @db.Text
+  id              String    @id @default(uuid())
+  accountId       String    @map("account_id")
+  deviceId        String?   @map("device_id")
+  ipAddress       String?   @map("ip_address")
+  userAgent       String?   @map("user_agent")
+  location        String?
+  loginAt         DateTime? @map("login_at")
+  expiresAt       DateTime? @map("expires_at")
+  lastAactivityAt DateTime? @map("last_activity_at")
+  revokedAt       DateTime? @map("revoked_at")
+  revokedReason   String    @map("revoked_reason") @db.Text
 
-    sessionAccount Account        @relation(fields: [accountId], references: [id])
-    sessionDevice  Device?        @relation(fields: [deviceId], references: [id])
-    refreshTokens  RefreshToken[]
-    loginHistories LoginHistory[]
+  sessionAccount Account        @relation(fields: [accountId], references: [id])
+  sessionDevice  Device?        @relation(fields: [deviceId], references: [id])
+  refreshTokens  RefreshToken[]
+  loginHistories LoginHistory[]
 
-    @@index([accountId, deviceId])
-    @@map("session")
-    @@schema("auth")
+  @@index([accountId, deviceId])
+  @@map("session")
+  @@schema("auth")
 }
 
 model RefreshToken {
-    id          String    @id @default(uuid())
-    sessionId   String    @map("session_id")
-    tokenHash   String    @map("token_hash")
-    expiresAt   DateTime? @map("expires_at")
-    revokedAt   DateTime? @map("revoked_at")
-    rotatedFrom String    @map("rotated_from")
-    createdAt   DateTime  @default(now()) @map("created_at")
+  id          String    @id @default(uuid())
+  sessionId   String    @map("session_id")
+  tokenHash   String    @map("token_hash")
+  expiresAt   DateTime? @map("expires_at")
+  revokedAt   DateTime? @map("revoked_at")
+  rotatedFrom String    @map("rotated_from")
+  createdAt   DateTime  @default(now()) @map("created_at")
 
-    refreshTokenSession Session @relation(fields: [sessionId], references: [id])
+  refreshTokenSession Session @relation(fields: [sessionId], references: [id])
 
-    @@index([sessionId])
-    @@map("refresh_token")
-    @@schema("auth")
+  @@index([sessionId])
+  @@map("refresh_token")
+  @@schema("auth")
 }
 
 model Device {
-    id                String   @id @default(uuid())
-    userId            String   @map("user_id")
-    deviceFingerprint String   @map("device_fingerprint")
-    deviceName        String   @map("device_name")
-    browser           String
-    os                String
-    platform          String
-    ip                String
-    location          String
-    trusted           BigInt   @default(0)
-    lastUsed          BigInt   @default(0) @map("last_used")
-    createdAt         DateTime @default(now()) @map("created_at")
+  id                String   @id @default(uuid())
+  userId            String   @map("user_id")
+  deviceFingerprint String   @map("device_fingerprint")
+  deviceName        String   @map("device_name")
+  browser           String
+  os                String
+  platform          String
+  ip                String
+  location          String
+  trusted           BigInt   @default(0)
+  lastUsed          BigInt   @default(0) @map("last_used")
+  createdAt         DateTime @default(now()) @map("created_at")
 
-    userDevice     User           @relation(fields: [userId], references: [id])
-    sessions       Session[]
-    loginHistories LoginHistory[]
+  userDevice     User           @relation(fields: [userId], references: [id])
+  sessions       Session[]
+  loginHistories LoginHistory[]
+  rememberMes    RememberMe[]
 
-    @@index([userId])
-    @@map("device")
-    @@schema("auth")
+  @@index([userId])
+  @@map("device")
+  @@schema("auth")
 }
 
 model LoginHistory {
-    id           String   @id @default(uuid())
-    userId       String   @map("user_id")
-    sessionId    String   @map("session_id")
-    deviceId     String   @map("device_id")
-    ip           String?
-    browser      String?
-    os           String
-    country      String
-    city         String
-    loginMethod  String   @map("login_method")
-    status       Int      @default(1)
-    failureReson String   @map("failure_session")
-    createdAt    DateTime @default(now()) @map("created_at")
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  sessionId    String   @map("session_id")
+  deviceId     String   @map("device_id")
+  ip           String?
+  browser      String?
+  os           String
+  country      String
+  city         String
+  loginMethod  String   @map("login_method")
+  status       Int      @default(1)
+  failureReson String   @map("failure_session")
+  createdAt    DateTime @default(now()) @map("created_at")
 
-    userLoginHistory    User    @relation(fields: [userId], references: [id])
-    sessionLoginHistory Session @relation(fields: [sessionId], references: [id])
-    deviceLoginHistory  Device  @relation(fields: [deviceId], references: [id])
-    loginHistoryStatus  Status  @relation(fields: [status], references: [id])
+  userLoginHistory    User    @relation(fields: [userId], references: [id])
+  sessionLoginHistory Session @relation(fields: [sessionId], references: [id])
+  deviceLoginHistory  Device  @relation(fields: [deviceId], references: [id])
+  loginHistoryStatus  Status  @relation(fields: [status], references: [id])
 
-    @@index([userId, sessionId, deviceId])
-    @@map("login_history")
-    @@schema("auth")
+  @@index([userId, sessionId, deviceId])
+  @@map("login_history")
+  @@schema("auth")
 }
 
 model PasswordReset {
-    id         String   @id @default(uuid())
-    userId     String   @map("user_id")
-    tokenHash  String   @map("token_hash")
-    expires_at DateTime
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  tokenHash String    @map("token_hash")
+  expiresAt DateTime? @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
 
-    @@map("password_reset")
-    @@schema("auth")
+  @@index([userId])
+  @@map("password_reset")
+  @@schema("auth")
+}
+
+model EmailVerification {
+  id         String    @id @default(uuid())
+  userId     String    @map("user_id")
+  email      String
+  tokenHash  String    @map("token_hash")
+  expiresAt  DateTime? @map("expires_at")
+  verifiedAt DateTime? @map("verified_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  userEmailVerification User @relation(fields: [userId], references: [id])
+
+  @@index([userId, email])
+  @@map("email_verification")
+  @@schema("auth")
+}
+
+model MfaFactor {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  type      String
+  secret    String
+  enabled   BigInt    @default(0)
+  lastUsed  DateTime? @map("last_used")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  userMfaFactor User           @relation(fields: [userId], references: [id])
+  recoveryCodes RecoveryCode[]
+
+  @@map("mfa_factor")
+  @@schema("auth")
+}
+
+model RecoveryCode {
+  id          String    @id @default(uuid())
+  mfaFactorId String    @map("mfa_factor_id")
+  codeHash    String    @map("code_hash")
+  usedAt      DateTime? @map("used_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  recoveryMfaFactor MfaFactor @relation(fields: [mfaFactorId], references: [id])
+
+  @@index([mfaFactorId])
+  @@map("recovery_code")
+  @@schema("auth")
+}
+
+model RememberMe {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  deviceId  String    @map("device_id")
+  tokenHash String    @map("token_hash")
+  expiresAt DateTime? @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  rememberMeUser   User   @relation(fields: [userId], references: [id])
+  rememberMeDevice Device @relation(fields: [deviceId], references: [id])
+
+  @@index([userId, deviceId])
+  @@map("remember_me")
+  @@schema("auth")
 }
