@@ -1,0 +1,22 @@
+model Role {
+  id          String   @id @default(uuid()) @db.Uuid
+  workspaceId String   @map("workspace_id") @db.Uuid
+  roleKey     String   @map("role_key") @db.VarChar(100)
+  name        String   @db.VarChar(100)
+  description String?  @db.Text
+  isSystem    Boolean  @default(false) @map("is_system")
+  status      Status   @default(ACTIVE)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  workspace   Workspace             @relation(fields: [workspaceId], references: [id])
+  permissions RolePermission[]
+  memberRoles WorkspaceMemberRole[]
+  invitations Invitation[]
+
+  @@unique([workspaceId, roleKey])
+  @@index([workspaceId])
+  @@index([status])
+  @@map("role")
+  @@schema("master")
+}

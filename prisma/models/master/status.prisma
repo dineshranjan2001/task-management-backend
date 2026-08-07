@@ -1,0 +1,8 @@
+enum Status {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  DELETED
+
+  @@schema("master")
+}

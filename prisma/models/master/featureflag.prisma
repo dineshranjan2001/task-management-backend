@@ -1,0 +1,14 @@
+model FeatureFlag {
+  id          String   @id @default(uuid()) @db.Uuid
+  key         String   @unique @db.VarChar(150)
+  name        String   @db.VarChar(150)
+  description String?  @db.Text
+  enabled     Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  assignments FeatureFlagAssignment[]
+
+  @@map("feature_flag")
+  @@schema("master")
+}

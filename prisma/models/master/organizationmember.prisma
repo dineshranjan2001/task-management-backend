@@ -1,0 +1,27 @@
+model OrganizationMember {
+  id                String           @id @default(uuid()) @db.Uuid
+  organizationId    String           @map("organization_id") @db.Uuid
+  workspaceMemberId String           @map("workspace_member_id") @db.Uuid
+  designation       String?          @db.VarChar(150)
+  managerMemberId   String?          @map("manager_member_id") @db.Uuid
+  joinedAt          DateTime         @default(now()) @map("joined_at")
+  leftAt            DateTime?
+  status            MembershipStatus @default(ACTIVE)
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  workspaceMember WorkspaceMember @relation(fields: [workspaceMemberId], references: [id])
+
+  managerMember OrganizationMember? @relation("OrganizationManager", fields: [managerMemberId], references: [id])
+
+  managedMembers OrganizationMember[] @relation("OrganizationManager")
+
+  teamMembers TeamMember[]
+
+  @@unique([organizationId, workspaceMemberId])
+  @@index([workspaceMemberId])
+  @@index([managerMemberId])
+  @@index([organizationId, status])
+  @@map("organization_member")
+  @@schema("master")
+}

@@ -1,0 +1,10 @@
+model Currency {
+  id                Int                @id @default(autoincrement())
+  code              String             @unique @db.Char(3)
+  name              String             @db.VarChar(100)
+  symbol            String?            @db.VarChar(10)
+  workspaceSettings WorkspaceSetting[]
+
+  @@map("currency")
+  @@schema("master")
+}

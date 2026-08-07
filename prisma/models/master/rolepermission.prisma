@@ -1,0 +1,14 @@
+model RolePermission {
+  id           Int     @id @default(autoincrement())
+  roleId       String  @map("role_id") @db.Uuid
+  permissionId Int     @map("permission_id")
+  allow        Boolean @default(true)
+
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  permission Permission @relation(fields: [permissionId], references: [id])
+
+  @@unique([roleId, permissionId])
+  @@map("role_permission")
+  @@schema("master")
+}

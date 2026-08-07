@@ -1,0 +1,9 @@
+model Country {
+  id    Int    @id @default(autoincrement())
+  code  String @unique @db.Char(2)
+  name  String @db.VarChar(100)
+  users User[]
+
+  @@map("country")
+  @@schema("master")
+}

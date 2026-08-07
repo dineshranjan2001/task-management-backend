@@ -1,0 +1,33 @@
+model Organization {
+  id                   String    @id @default(uuid()) @db.Uuid
+  organizationCode     String    @unique @map("organization_code") @db.VarChar(30)
+  workspaceId          String    @map("workspace_id") @db.Uuid
+  parentOrganizationId String?   @map("parent_organization_id") @db.Uuid
+  name                 String    @db.VarChar(200)
+  slug                 String    @db.VarChar(200)
+  description          String?   @db.Text
+  status               Status    @default(ACTIVE)
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+  deletedAt            DateTime? @map("deleted_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+
+  parentOrganization Organization? @relation("OrganizationHierarchy", fields: [parentOrganizationId], references: [id])
+
+  childOrganizations Organization[] @relation("OrganizationHierarchy")
+
+  setting OrganizationSetting?
+
+  members OrganizationMember[]
+
+  teams Team[]
+
+  @@unique([workspaceId, slug])
+  @@index([workspaceId])
+  @@index([parentOrganizationId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("organization")
+  @@schema("master")
+}

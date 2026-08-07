@@ -1,0 +1,22 @@
+model RefreshToken {
+  id           String    @id @default(uuid()) @db.Uuid
+  accountId    String    @map("account_id") @db.Uuid
+  sessionId    String    @map("session_id") @db.Uuid
+  tokenHash    String    @unique @map("token_hash") @db.VarChar(128)
+  expiresAt    DateTime  @map("expires_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  revokedAt    DateTime? @map("revoked_at")
+  replacedById String?   @map("replaced_by_id") @db.Uuid
+
+  account     Account        @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  session     Session        @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  replacedBy  RefreshToken?  @relation("RefreshTokenRotation", fields: [replacedById], references: [id])
+  rotatedFrom RefreshToken[] @relation("RefreshTokenRotation")
+
+  @@index([accountId])
+  @@index([sessionId])
+  @@index([expiresAt])
+  @@index([revokedAt])
+  @@map("refresh_token")
+  @@schema("auth")
+}

@@ -1,0 +1,14 @@
+model OrganizationSetting {
+  id               String   @id @default(uuid()) @db.Uuid
+  organizationId   String   @unique @map("organization_id") @db.Uuid
+  costCenter       String?  @map("cost_center") @db.VarChar(100)
+  approvalRequired Boolean  @default(false) @map("approval_required")
+  metadata         Json?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("organization_setting")
+  @@schema("master")
+}
