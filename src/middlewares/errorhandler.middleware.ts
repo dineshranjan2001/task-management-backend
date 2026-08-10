@@ -3,10 +3,11 @@ import { logger } from "../configs/logger.config";
 import { ApiError } from "../utils/apierror.utils";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import jwt from "jsonwebtoken";
+import z, { ZodError } from "zod";
 
 
 export function errorHandler(
-    err: Error,
+    err: unknown,
     req: Request,
     res: Response,
     next: NextFunction
@@ -46,6 +47,15 @@ export function errorHandler(
         return res.status(401).json({
             success: false,
             message: "Invalid token",
+        });
+    }
+
+    if (err instanceof ZodError) {
+        return res.status(400).json({
+            success: false,
+            code: "VALIDATION_ERROR",
+            message: "Validation failed",
+            errors: z.flattenError(err)
         });
     }
 
