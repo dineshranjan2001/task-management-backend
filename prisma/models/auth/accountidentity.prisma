@@ -1,0 +1,19 @@
+model AccountIdentity {
+  id                    String       @id @default(uuid()) @db.Uuid
+  accountId             String       @map("account_id") @db.Uuid
+  provider              AuthProvider
+  providerAccountId     String       @map("provider_account_id") @db.VarChar(255)
+  providerEmail         String?      @map("provider_email") @db.VarChar(320)
+  providerEmailVerified Boolean      @default(false) @map("provider_email_verified")
+  profileData           Json?        @map("profile_data")
+  linkedAt              DateTime     @default(now()) @map("linked_at")
+  lastUsedAt            DateTime?    @map("last_used_at")
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([accountId])
+  @@index([provider, providerEmail])
+  @@map("account_identity")
+  @@schema("auth")
+}

@@ -1,0 +1,9 @@
+enum AuthProvider {
+  GOOGLE
+  PASSWORD
+  APPLE
+  GITHUB
+  MICROSOFT
+
+  @@schema("auth")
+}

@@ -1,0 +1,9 @@
+enum AccountStatus {
+  PENDING
+  ACTIVE
+  LOCKED
+  SUSPENDED
+  DISABLED
+
+  @@schema("auth")
+}

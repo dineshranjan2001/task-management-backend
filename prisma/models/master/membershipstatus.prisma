@@ -1,0 +1,8 @@
+enum MembershipStatus {
+  INVITED
+  ACTIVE
+  SUSPENDED
+  REMOVED
+
+  @@schema("master")
+}

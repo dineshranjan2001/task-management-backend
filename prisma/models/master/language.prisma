@@ -1,0 +1,10 @@
+model Language {
+  id                Int                @id @default(autoincrement())
+  code              String             @unique @db.VarChar(10)
+  name              String             @db.VarChar(100)
+  users             User[]
+  workspaceSettings WorkspaceSetting[]
+
+  @@map("language")
+  @@schema("master")
+}

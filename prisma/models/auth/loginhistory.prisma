@@ -1,0 +1,15 @@
+model LoginHistory {
+  id            String     @id @default(uuid()) @db.Uuid
+  accountId     String     @map("account_id") @db.Uuid
+  event         LoginEvent
+  success       Boolean
+  ipAddress     String?    @map("ip_address") @db.Inet
+  userAgent     String?    @map("user_agent") @db.Text
+  failureReason String?    @map("failure_reason") @db.VarChar(255)
+  createdAt     DateTime   @default(now()) @map("created_at")
+
+  @@index([accountId, createdAt])
+  @@index([ipAddress, createdAt])
+  @@map("login_history")
+  @@schema("auth")
+}

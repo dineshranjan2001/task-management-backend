@@ -1,0 +1,10 @@
+enum LoginEvent {
+  LOGIN
+  LOGOUT
+  LOGIN_FAILED
+  TOKEN_REFRESH
+  SESSION_REVOKED
+  LOGOUT_ALL
+
+  @@schema("auth")
+}

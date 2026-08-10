@@ -1,0 +1,16 @@
+model TeamSetting {
+  id                  String   @id @default(uuid()) @db.Uuid
+  teamId              String   @unique @map("team_id") @db.Uuid
+  workingHours        Json?    @map("working_hours")
+  capacity            Decimal? @db.Decimal(10, 2)
+  velocityTarget      Decimal? @map("velocity_target") @db.Decimal(10, 2)
+  defaultSprintLength Int?     @map("default_sprint_length")
+  metadata            Json?
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@map("team_setting")
+  @@schema("master")
+}

@@ -1,0 +1,16 @@
+model FeatureFlagAssignment {
+  id            String   @id @default(uuid()) @db.Uuid
+  featureFlagId String   @map("feature_flag_id") @db.Uuid
+  workspaceId   String   @map("workspace_id") @db.Uuid
+  enabled       Boolean  @default(true)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  featureFlag FeatureFlag @relation(fields: [featureFlagId], references: [id], onDelete: Cascade)
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([featureFlagId, workspaceId])
+  @@index([workspaceId])
+  @@map("feature_flag_assignment")
+  @@schema("master")
+}

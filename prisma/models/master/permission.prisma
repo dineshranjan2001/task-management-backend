@@ -1,0 +1,14 @@
+model Permission {
+  id                Int     @id @default(autoincrement())
+  permissionGroupId Int     @map("permission_group_id")
+  permissionKey     String  @unique @map("permission_key") @db.VarChar(150)
+  name              String  @db.VarChar(150)
+  description       String? @db.Text
+
+  permissionGroup PermissionGroup  @relation(fields: [permissionGroupId], references: [id])
+  roles           RolePermission[]
+
+  @@index([permissionGroupId])
+  @@map("permission")
+  @@schema("master")
+}

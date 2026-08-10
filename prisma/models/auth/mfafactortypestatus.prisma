@@ -1,0 +1,8 @@
+enum MfaFactorType {
+  TOTP
+  SMS
+  EMAIL
+  WEBAUTHN
+
+  @@schema("auth")
+}

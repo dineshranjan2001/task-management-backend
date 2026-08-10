@@ -1,0 +1,31 @@
+model User {
+  id          String  @id @default(uuid()) @db.Uuid
+  userCode    String  @unique @map("user_code") @db.VarChar(30)
+  firstName   String  @map("first_name") @db.VarChar(100)
+  lastName    String  @map("last_name") @db.VarChar(100)
+  displayName String? @map("display_name") @db.VarChar(200)
+  username    String? @unique @db.VarChar(100)
+  email       String  @unique @db.VarChar(320)
+  phone       String? @unique @db.VarChar(30)
+  avatarUrl   String? @map("avatar_url") @db.Text
+  jobTitle    String? @map("job_title") @db.VarChar(150)
+  bio         String? @db.Text
+  timezoneId  Int?    @map("timezone_id")
+  languageId  Int?    @map("language_id")
+  countryId   Int?    @map("country_id")
+  status      Status  @default(ACTIVE)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  workspaceMembers WorkspaceMember[]
+  timezone         Timezone?         @relation(fields: [timezoneId], references: [id], onDelete: Cascade)
+  language         Language?         @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  country          Country?          @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([deletedAt])
+  @@map("user")
+  @@schema("master")
+}

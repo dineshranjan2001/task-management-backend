@@ -1,0 +1,23 @@
+model WorkspaceSetting {
+  id                  String   @id @default(uuid()) @db.Uuid
+  workspaceId         String   @unique @map("workspace_id") @db.Uuid
+  timezoneId          Int      @map("timezone_id")
+  languageId          Int      @map("language_id")
+  currencyId          Int      @map("currency_id")
+  dateFormat          String   @default("DD/MM/YYYY") @map("date_format") @db.VarChar(30)
+  timeFormat          String   @default("24H") @map("time_format") @db.VarChar(10)
+  workingDays         Json?    @map("working_days")
+  workingHours        Json?    @map("working_hours")
+  allowGuestAccess    Boolean  @default(false) @map("allow_guest_access")
+  allowPublicProjects Boolean  @default(false) @map("allow_public_projects")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  timezone  Timezone  @relation(fields: [timezoneId], references: [id], onDelete: Cascade)
+  language  Language  @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  currency  Currency  @relation(fields: [currencyId], references: [id], onDelete: Cascade)
+
+  @@map("workspace_setting")
+  @@schema("master")
+}

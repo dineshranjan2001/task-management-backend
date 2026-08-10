@@ -1,0 +1,12 @@
+model PermissionGroup {
+  id           Int     @id @default(autoincrement())
+  groupKey     String  @unique @map("group_key") @db.VarChar(100)
+  name         String  @db.VarChar(100)
+  description  String? @db.Text
+  displayOrder Int     @default(0) @map("display_order")
+
+  permissions Permission[]
+
+  @@map("permission_group")
+  @@schema("master")
+}

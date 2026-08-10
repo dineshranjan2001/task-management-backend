@@ -1,0 +1,17 @@
+model Tenant {
+  id         String    @id @default(uuid()) @db.Uuid
+  tenantCode String    @unique @map("tenant_code") @db.VarChar(30)
+  name       String    @db.VarChar(200)
+  slug       String    @unique @db.VarChar(200)
+  status     Status    @default(ACTIVE)
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  workspaces Workspace[]
+
+  @@index([deletedAt])
+  @@index([status])
+  @@map("tenant")
+  @@schema("master")
+}

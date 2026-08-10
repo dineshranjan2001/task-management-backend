@@ -1,0 +1,10 @@
+enum EmploymentType {
+  PERMANENT
+  CONTRACT
+  INTERN
+  CONSULTANT
+  VENDOR
+  TEMPORARY
+
+  @@schema("master")
+}

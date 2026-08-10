@@ -1,0 +1,10 @@
+model Timezone {
+  id                Int                @id @default(autoincrement())
+  name              String             @unique @db.VarChar(100)
+  utcOffset         String?            @map("utc_offset") @db.VarChar(10)
+  users             User[]
+  workspaceSettings WorkspaceSetting[]
+
+  @@map("timezone")
+  @@schema("master")
+}
